@@ -452,46 +452,109 @@ textarea.input{resize:vertical;min-height:44px}
   /* =========================================================
      AUTH
      ========================================================= */
-  async function doRegister(login, password, displayName){
-    try {
-      const email = login + '@pikuko.local';
-      const currentUser = firebase.auth().currentUser;
-      let user;
-
-      if (currentUser && currentUser.isAnonymous) {
-        const credential = firebase.auth.EmailAuthProvider.credential(email, password);
-        const res = await currentUser.linkWithCredential(credential);
-        user = res.user;
-      } else {
-        const res = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        user = res.user;
-      }
-
-      const uid = user.uid;
-      const cleanName = cleanText(displayName || login).slice(0, 40);
-
-      const profile = {
-        name: cleanName,
-        avatar: EMOJIS[Math.floor(Math.random()*EMOJIS.length)],
-        online: true,
-        lastSeen: Date.now()
-      };
-
-      await fbFetch(`/users/${uid}.json`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profile)
-      });
-
-      state.user = { id: uid, login: login, isGuest: false, ...profile };
-      toast('Успешно!', 'good');
-      return true;
-    } catch (error) {
-      console.error(error);
-      toast('Ошибка: ' + error.message, 'warn');
-      return false;
-    }
+  function validateLogin(login) {
+  if (!login || login.length < 3) return 'Логин — не короче 3 символов';
+  if (login.length > 20) return 'Логин — не длиннее 20 символов';
+  if (!/^[a-z0-9._-]+$/.test(login)) {
+    return 'Логин: только латиница (a-z), цифры, точка, дефис, _';
   }
+  return null;
+}
+
+function validatePassword(password) {
+  if (!password || password.length < 6) return 'Пароль — минимум 6 символов';
+  return null;
+}
+
+function fbErrorToRu(code) {
+  const map = {
+    'auth/email-already-in-use': 'Этот логин уже занят — попробуй другой',
+    'auth/credential-already-in-use': 'Этот логин уже занят — попробуй другой',
+    'auth/invalid-email': 'Недопустимые символы в логине. Используй только латиницу (a-z)',
+    'auth/weak-password': 'Пароль слишком простой — нужно минимум 6 символов',
+    'auth/operation-not-allowed': 'Регистрация отключена в настройках Firebase',
+    'auth/network-request-failed': 'Нет связи с сервером. Проверь интернет',
+    'auth/too-many-requests': 'Слишком много попыток. Подожди пару минут',
+    'auth/user-not-found': 'Аккаунт не найден',
+    'auth/wrong-password': 'Неверный пароль',
+    'auth/invalid-credential': 'Неверный логин или пароль'
+  };
+  return map[code] || ('Ошибка: ' + code);
+}
+
+async function doRegister(login, password, displayName){
+  login = (login || '').trim().toLowerCase();
+  displayName = (displayName || '').trim();
+
+  const loginErr = validateLogin(login);
+  if (loginErr) { toast(loginErr, 'warn'); return false; }
+
+  const passErr = validatePassword(password);
+  if (passErr) { toast(passErr, 'warn'); return false; }
+
+  try {
+    const email = login + '@pikuko.local';
+    const currentUser = firebase.auth().currentUser;
+    let user;
+
+    if (currentUser && currentUser.isAnonymous) {
+      const credential = firebase.auth.EmailAuthProvider.credential(email, password);
+      const res = await currentUser.linkWithCredential(credential);
+      user = res.user;
+    } else {
+      const res = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      user = res.user;
+    }
+
+    const uid = user.uid;
+    const cleanName = cleanText(displayName || login).slice(0, 40);
+
+    const profile = {
+      name: cleanName,
+      avatar: EMOJIS[Math.floor(Math.random()*EMOJIS.length)],
+      online: true,
+      lastSeen: Date.now()
+    };
+
+    await fbFetch(`/users/${uid}.json`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(profile)
+    });
+
+    state.user = { id: uid, login: login, isGuest: false, ...profile };
+    toast('Успешно!', 'good');
+    return true;
+  } catch (error) {
+    console.error('Регистрация:', error);
+    toast(fbErrorToRu(error.code), 'warn');
+    return false;
+  }
+}
+
+async function doLogin(login, password){
+  login = (login || '').trim().toLowerCase();
+  if (!login || !password) { toast('Заполни логин и пароль', 'warn'); return false; }
+
+  try {
+    const email = login + '@pikuko.local';
+    const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+    const uid = userCredential.user.uid;
+
+    const profileRes = await fbFetch(`/users/${uid}.json`);
+    const profile = await profileRes.json();
+
+    if (!profile) throw new Error('auth/user-not-found');
+
+    state.user = { id: uid, login: login, isGuest: false, ...profile };
+    toast('Вы вошли!', 'good');
+    return true;
+  } catch (error) {
+    console.error('Вход:', error);
+    toast(fbErrorToRu(error.code) || 'Неверный логин или пароль', 'warn');
+    return false;
+  }
+}
 
   async function doLogin(login, password){
     try {
