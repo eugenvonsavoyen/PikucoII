@@ -532,30 +532,6 @@ async function doRegister(login, password, displayName){
   }
 }
 
-async function doLogin(login, password){
-  login = (login || '').trim().toLowerCase();
-  if (!login || !password) { toast('Заполни логин и пароль', 'warn'); return false; }
-
-  try {
-    const email = login + '@pikuko.local';
-    const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
-    const uid = userCredential.user.uid;
-
-    const profileRes = await fbFetch(`/users/${uid}.json`);
-    const profile = await profileRes.json();
-
-    if (!profile) throw new Error('auth/user-not-found');
-
-    state.user = { id: uid, login: login, isGuest: false, ...profile };
-    toast('Вы вошли!', 'good');
-    return true;
-  } catch (error) {
-    console.error('Вход:', error);
-    toast(fbErrorToRu(error.code) || 'Неверный логин или пароль', 'warn');
-    return false;
-  }
-}
-
   async function doLogin(login, password){
     try {
       const email = login + '@pikuko.local';
