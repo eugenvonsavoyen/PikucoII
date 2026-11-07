@@ -1262,7 +1262,7 @@ function trySpawnMine() {
     const x = rnd(0, COLS - 1), y = rnd(0, ROWS - 1);
     const p = { x, y };
     if (snake.some(s => s.x === x && s.y === y)) continue;
-    if (cheb(p, snake[0]) < 3) continue;
+    if (cheb(p, snake[0]) < 6) continue;
     if (cheb(p, snake[snake.length - 1]) <= 2) continue;
     if (apples.some(a => cheb(p, a) < 1)) continue;
     if (mushrooms.some(m => m.x === x && m.y === y)) continue;
