@@ -210,7 +210,8 @@ body .quiz-opt.wrong{background:var(--red-bg);border-color:var(--red);color:var(
 .lesson-nav .btn-nav:disabled{opacity:.35;cursor:not-allowed}
 .lesson-nav .btn-next{background:var(--red);color:#fff;border-color:var(--red);min-width:130px}
 .lesson-nav .btn-next:hover:not(:disabled){background:var(--red-dark)}
-.lesson-nav .btn-check{background:var(--purple);color:#fff;border-color:var(--purple);min-width:130px}
+.lesson-nav .btn-check{background:var(--red);color:#fff;border-color:var(--red);min-width:130px}
+.lesson-nav .btn-check:hover:not(:disabled){background:var(--red-dark)}
 .complete-screen{text-align:center;padding:30px 15px}
 .complete-screen h2{margin:0 0 12px;color:var(--green)}
 .complete-screen .score{font-size:2.4em;font-weight:700;color:var(--red);margin:10px 0}
@@ -3624,12 +3625,27 @@ let plVoice = null;
 function loadVoices(){ if(!('speechSynthesis' in window)) return; const v = window.speechSynthesis.getVoices(); plVoice = v.find(x => x.lang && x.lang.toLowerCase().startsWith('pl')) || null; }
 if('speechSynthesis' in window){ loadVoices(); window.speechSynthesis.onvoiceschanged = loadVoices; }
 function speak(text, rate){
-  if(!('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'pl-PL'; u.rate = rate || 0.85;
+  if(!('speechSynthesis' in window) || !text) return;
+
+  const synth = window.speechSynthesis;
+
+  // Обновляем список голосов непосредственно перед озвучиванием
+  const voices = synth.getVoices();
+  plVoice = voices.find(v =>
+    v.lang && v.lang.toLowerCase().startsWith('pl')
+  ) || plVoice;
+
+  // Не сбрасываем очередь без необходимости
+  if(synth.speaking || synth.pending) synth.cancel();
+
+  const u = new SpeechSynthesisUtterance(String(text));
+  u.lang = 'pl-PL';
+  u.rate = rate || 0.85;
+
   if(plVoice) u.voice = plVoice;
-  window.speechSynthesis.speak(u);
+
+  synth.resume();
+  synth.speak(u);
 }
 const hasTTS = () => 'speechSynthesis' in window;
 
