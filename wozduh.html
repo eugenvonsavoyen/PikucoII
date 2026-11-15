@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Курс: Максимальное Воздуханство и Профессиональное Искусство Игнора</title>
+<style>
+  :root {
+    --bg: #0f1226;
+    --card: #191d3a;
+    --accent: #7c5cff;
+    --accent2: #ff5c8a;
+    --text: #e8e9f3;
+    --muted: #9a9cb8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 20% 0%, #1d2247 0%, var(--bg) 55%);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+
+  header.hero {
+    text-align: center;
+    padding: 64px 24px;
+    border-radius: 28px;
+    background: linear-gradient(135deg, rgba(124,92,255,.18), rgba(255,92,138,.12));
+    border: 1px solid rgba(124,92,255,.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header.hero::after {
+    content: "💨";
+    position: absolute;
+    font-size: 220px;
+    opacity: .07;
+    right: -30px;
+    bottom: -60px;
+    transform: rotate(-15deg);
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid rgba(255,92,138,.5);
+    padding: 6px 14px;
+    border-radius: 999px;
+    margin-bottom: 22px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 46px);
+    line-height: 1.15;
+    margin-bottom: 18px;
+  }
+
+  h1 span {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 18px;
+    max-width: 620px;
+    margin: 0 auto 30px;
+  }
+
+  .cta {
+    display: inline-block;
+    padding: 14px 32px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 17px;
+    color: #fff;
+    text-decoration: none;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    box-shadow: 0 10px 30px rgba(124,92,255,.35);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+
+  .cta:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(255,92,138,.35); }
+
+  .free-note {
+    margin-top: 18px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .free-note b { color: #7dffb0; font-weight: 600; }
+
+  section { margin-top: 72px; }
+
+  h2 {
+    font-size: 26px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h2::before {
+    content: "";
+    width: 6px;
+    height: 28px;
+    border-radius: 3px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 20px;
+    padding: 26px;
+    transition: transform .2s ease, border-color .2s ease;
+  }
+
+  .card:hover { transform: translateY(-4px); border-color: rgba(124,92,255,.5); }
+
+  .card .icon { font-size: 30px; margin-bottom: 12px; }
+
+  .card h3 { font-size: 18px; margin-bottom: 10px; }
+
+  .card p { color: var(--muted); font-size: 15px; }
+
+  /* Модули */
+  .module {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .module .num {
+    flex: 0 0 52px;
+    height: 52px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+  }
+
+  .module h3 { font-size: 18px; margin-bottom: 6px; }
+  .module p { color: var(--muted); font-size: 15px; }
+  .module .tag {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(124,92,255,.4);
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+
+  /* Спецблок: бесплатный вводный урок */
+  .module--free {
+    border: 1px solid rgba(125,255,176,.4);
+    background: linear-gradient(135deg, rgba(125,255,176,.07), var(--card) 60%);
+    flex-wrap: wrap;
+  }
+
+  .module--free .num {
+    background: linear-gradient(135deg, #2fd77b, #7dffb0);
+    color: #06210f;
+  }
+
+  .module--free .tag {
+    color: #7dffb0;
+    border-color: rgba(125,255,176,.45);
+  }
+
+  .module-body { flex: 1 1 320px; min-width: 0; }
+
+  .lesson-action {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  /* Яркая зелёная кнопка — манит, но не нажимается */
+  .btn-tease {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 26px;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: inherit;
+    color: #05230f;
+    background: linear-gradient(135deg, #2fd77b, #7dffb0);
+    box-shadow: 0 0 0 1px rgba(125,255,176,.6),
+                0 8px 26px rgba(47,215,123,.45),
+                0 0 34px rgba(125,255,176,.35);
+    cursor: not-allowed;          /* при наведении система покажет 🚫 */
+    user-select: none;
+    animation: tease-glow 2s ease-in-out infinite;
+  }
+
+  .btn-tease .play {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(5,35,15,.18);
+    font-size: 12px;
+  }
+
+  @keyframes tease-glow {
+    0%, 100% {
+      box-shadow: 0 0 0 1px rgba(125,255,176,.6),
+                  0 8px 26px rgba(47,215,123,.45),
+                  0 0 34px rgba(125,255,176,.35);
+    }
+    50% {
+      box-shadow: 0 0 0 2px rgba(125,255,176,.85),
+                  0 10px 34px rgba(47,215,123,.65),
+                  0 0 52px rgba(125,255,176,.55);
+    }
+  }
+
+  /* Цитата */
+  blockquote {
+    border-left: 4px solid var(--accent2);
+    padding: 18px 24px;
+    background: rgba(255,92,138,.07);
+    border-radius: 0 16px 16px 0;
+    font-style: italic;
+    color: #d9dae8;
+  }
+
+  blockquote cite {
+    display: block;
+    margin-top: 10px;
+    font-style: normal;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* Форма */
+  form {
+    background: var(--card);
+    border: 1px solid rgba(124,92,255,.25);
+    border-radius: 24px;
+    padding: 32px;
+    display: grid;
+    gap: 16px;
+  }
+
+  label { font-size: 14px; color: var(--muted); }
+
+  input, select {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: #10142c;
+    color: var(--text);
+    font-size: 15px;
+    font-family: inherit;
+    margin-top: 6px;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,92,255,.2);
+  }
+
+  button[type="submit"] {
+    padding: 15px;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: inherit;
+    color: #fff;
+    cursor: pointer;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: transform .2s ease;
+  }
+
+  button[type="submit"]:hover { transform: translateY(-2px); }
+
+  footer {
+    margin-top: 80px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  @media (max-width: 560px) {
+    header.hero { padding: 44px 20px; }
+    .module { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="hero">
+      <div class="badge">Онлайн-курс · 8 модулей + вводный урок · 0 домашних заданий</div>
+      <h1>Максимальное <span>Воздуханство</span><br>и Профессиональное Искусство Игнора</h1>
+      <p class="subtitle">
+        Научитесь смотреть сквозь людей, слышать только себя и мастерски
+        не замечать очевидное. Диплом выдаётся, но мы его проигнорируем.
+      </p>
+      <a class="cta" href="#enroll">Записаться (или нет)</a>
+      <p class="free-note">🎁 <b>Доступен бесплатный вводный урок</b> — Урок 00, прямо в программе курса.</p>
+    </header>
+
+    <section>
+      <h2>Чему вы научитесь</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="icon">🌫️</div>
+          <h3>Висящее лицо</h3>
+          <p>Техника «кирпич с глазами»: присутствовать физически, отсутствовать ментально.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🎧</div>
+          <h3>Выборочный слух</h3>
+          <p>Слышим «пойдём поедим», не слышим «помой посуду». Тонкая настройка частот.</p>
+        </div>
+        <div class="card">
+          <div class="icon">📱</div>
+          <h3>Скролл-щит</h3>
+          <p>Идеальный ответ на любой вопрос — «ага» не поднимая глаз от экрана.</p>
+        </div>
+        <div class="card">
+          <div class="icon">👻</div>
+          <h3>Профессиональное исчезновение</h3>
+          <p>Прочитал, не ответил, ушёл в закат. Высший пилотаж воздуханства.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🧠</div>
+          <h3>Философия пофигизма</h3>
+          <p>Внутренний дзен: мир шумит, а вы — облачко. Плывёте и никого не трогаете.</p>
+        </div>
+        <div class="card">
+          <div class="icon">🏆</div>
+          <h3>Сертификация</h3>
+          <p>Диплом магистра игнора. Мы, правда, забудем его отправить.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Программа курса</h2>
+
+      <!-- 🎁 БЕСПЛАТНЫЙ ВВОДНЫЙ УРОК -->
+      <div class="module module--free">
+        <div class="num">00</div>
+        <div class="module-body">
+          <h3>Вводный урок: «Как ничего не делать»</h3>
+          <p>
+            Бесплатный пробный урок. Разберём базовую позу, научимся смотреть в одну точку
+            и не реагировать на внешние раздражители. Длительность — пока не надоест.
+          </p>
+          <span class="tag">Бесплатно</span>
+
+          <div class="lesson-action">
+            <button class="btn-tease" type="button"
+                    aria-disabled="true"
+                    title="🚫 Недоступно"
+                    onclick="return false;">
+              <span class="play">▶</span>
+              <span>Пройти урок 00</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="num">01</div>
+        <div>
+          <h3>Введение в воздуханство</h3>
+          <p>История, виды и степени воздушности. Тест: «Сколько раз вы сегодня не услышали своё имя?»</p>
+          <span class="tag">Теория</span>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="num">02</div>
+        <div>
+          <h3>Анатомия взгляда в пустоту</h3>
+          <p>Куда смотреть, когда с тобой говорят. Правило 20 секунд тишины перед «что?».</p>
+          <span class="tag">Практика</span>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="num">03</div>
+        <div>
+          <h3>Искусство «ага»</h3>
+          <p>Универсальные ответы на всё: «ага», «угу», «серьёзно?», «ну да». Интонационные оттенки.</p>
+          <span class="tag">Разговорный клуб</span>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="num">04</div>
+        <div>
+          <h3>Игнор как стиль жизни</h3>
+          <p>Три уровня игнора: случайный, вежливый и тотальный. Когда какой включать (никогда).</p>
+          <span class="tag">Лекция</span>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="num">05</div>
+        <div>
+          <h3>Защита от непрошеных вопросов</h3>
+          <p>«Ты меня слушаешь?» — что ответить, не выходя из состояния воздушности.</p>
+          <span class="tag">Мастер-класс</span>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="num">06</div>
+        <div>
+          <h3>Продвинутый игнор: чтение без ответа</h3>
+          <p>Синие галочки как искусство. Прочитал — значит, почти ответил. Почти.</p>
+          <span class="tag">Воркшоп</span>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="num">07</div>
+        <div>
+          <h3>Воздуханство на работе</h3>
+          <p>«Я не видел сообщение», «оно ушло в спам», «а это было срочно?» — профессиональный словарь.</p>
+          <span class="tag">Кейсы</span>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="num">08</div>
+        <div>
+          <h3>Выпускной экзамен</h3>
+          <p>Вам зададут вопрос. Вы не ответите. Мы не проверим. Все получают пятёрку. Все забыли.</p>
+          <span class="tag">Финал</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Отзывы выпускников</h2>
+      <blockquote>
+        «Я прошёл курс и так его и не заметил. Лучшие деньги, которые я потратил впустую».
+        <cite>— Аноним, вероятно, ещё учится</cite>
+      </blockquote>
+      <br>
+      <blockquote>
+        «Сказали, что ответят по почте. Не ответили. Это и был экзамен».
+        <cite>— Студент, который так и не понял</cite>
+      </blockquote>
+    </section>
+
+    <section id="enroll">
+      <h2>Запись на курс</h2>
+      <form onsubmit="event.preventDefault(); alert('Заявка принята. Ответа не будет — это часть программы 😌');">
+        <div>
+          <label for="name">Ваше имя</label>
+          <input id="name" type="text" placeholder="Или не своё — мы не заметим" required>
+        </div>
+        <div>
+          <label for="email">Электронная почта</label>
+          <input id="email" type="email" placeholder="Письма мы всё равно проигнорируем" required>
+        </div>
+        <div>
+          <label for="level">Текущий уровень воздуханства</label>
+          <select id="level">
+            <option>Начальный — иногда ещё слышу людей</option>
+            <option>Средний — «ага» вылетает на автомате</option>
+            <option>Продвинутый — меня зовут, а я уже не здесь</option>
+            <option>Магистр — я вообще не открывал эту страницу</option>
+          </select>
+        </div>
+        <button type="submit">Отправить заявку в пустоту</button>
+      </form>
+    </section>
+
+    <footer>
+      © 2025 Школа Воздуханства и Игнора. Все права защищены, но мы на них не смотрим.
+    </footer>
+
+  </div>
+</body>
+</html>
